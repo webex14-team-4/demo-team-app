@@ -4,6 +4,7 @@
       <img src="@/assets/logo.png" alt="vue logo" width="50" height="50" />
       <h1>Vue 小作品集</h1>
       <h1>helloworld</h1>
+      <div></div>
     </div>
     <nav class="navigation">
       <router-link
