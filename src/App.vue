@@ -1,4 +1,5 @@
 <template>
+  <div>rinrin</div>
   <Header />
   <main class="main-view">
     <router-view />
