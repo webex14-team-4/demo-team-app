@@ -91,7 +91,7 @@ export default {
 }
 
 .memo__delete:hover {
-  background-color: #b2ae3b;
+  background-color: #d4ce21;
   border-radius: 5px;
 }
 
