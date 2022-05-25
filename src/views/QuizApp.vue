@@ -1,47 +1,22 @@
-<!-- 
-  クイズアプリの仕様
-
-  概要：お遊び（笑）MLと人の勝負（学習済みMLを使って、クイズの正誤でMLと勝負する）
-
-  オブジェクト：
-  1. クイズのデータセット：imageNet
-  2. 対戦相手：深層学習モデル
-  3. プレイヤー：人
-  
-  機能（必要）：
-  1. クイズ
-  2. ランキング（DBが必要）
-
-
-  概要：とりあえず最低限の機能で実装してみた。
-
-  機能：みんなでクイズをアップロードすることができる。（dbを活用）
-
-  TODO：dbを使わない。とりあえずソースファイル内で定義する。
-
--->
-
 <template>
-  <h1>Vue クイズ</h1>
-  <div class="app">
-    <h2>Q. {{ question }}</h2>
-    <img
-      class="quiz-image"
-      :src="require(`@/assets/quiz/${quizImg}`)"
-      :alt="question"
-    />
-    <div class="container">
-      <button @click="clickAnswer">
-        {{ choices[0] }}
-      </button>
-      <button>
-        {{ choices[1] }}
-      </button>
-      <button>
-        {{ choices[2] }}
+  <div class="quizApp">
+    <div class="question">
+      <h1>{{ quizs[quizIdx].question }}</h1>
+      <img :src="require(`@/assets/quiz/${quizs[quizIdx].fileName}`)" alt="" />
+    </div>
+    <div class="choice">
+      <button
+        @click="showAnswer(index)"
+        v-for="(choice, index) in quizs[quizIdx].choices"
+        :key="choice"
+      >
+        {{ choice }}
       </button>
     </div>
-    <div :id="answerStyle">答えは{{ answer }}!!</div>
+    <div class="answer">
+      <p class="feedback">{{ feedback }}</p>
+      <button :class="nextButton" @click="nextQuiz">次の問題へ進む</button>
+    </div>
   </div>
 </template>
 
@@ -49,37 +24,62 @@
 export default {
   data() {
     return {
-      question: "世界で2番目に高い山は？",
-      quizImg: "K2.webp",
-      choices: ["K2", "モンブラン山", "富士山"],
-      answerStyle: "defalut_answer",
-      answer: "K2",
+      quizIdx: 0,
+      quizs: [
+        {
+          question: "世界で2番目に高い山は？",
+          fileName: "K2.webp",
+          choices: ["K2", "モンブラン山", "富士山"],
+          correctChoiceIdx: 0,
+          feedbacks: ["yes", "no", "no"],
+        },
+        {
+          question: "世界で2番目に深い湖は？",
+          fileName: "Baikal.jpg",
+          choices: ["バイカル湖", "タンガニーカ湖", "カスピ海"],
+          correctChoiceIdx: 1,
+          feedbacks: ["no", "yes", "no"],
+        },
+      ],
+      nextButton: "non_visible",
+      feedback: "",
     }
   },
   methods: {
-    clickAnswer: function () {
-      this.answerStyle = "visiable_answer"
+    showAnswer(choiceIdx) {
+      this.__showFeedback(choiceIdx)
+      this.__showNextButton(
+        choiceIdx === this.quizs[this.quizIdx].correctChoiceIdx
+      )
+    },
+    __showFeedback(choiceIdx) {
+      this.feedback = this.quizs[this.quizIdx].feedbacks[choiceIdx]
+    },
+    __showNextButton(isCorrect) {
+      this.nextButton = isCorrect ? "visiable" : "non_visible"
+    },
+    nextQuiz() {
+      this.quizIdx =
+        this.quizIdx === this.quizs.length - 1 ? 0 : this.quizIdx + 1
     },
   },
 }
 </script>
 
 <style>
-.app {
+.quizApp {
   display: flex;
   width: 100%;
   flex-direction: column;
   align-items: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
-
-.quiz-image {
+.question > img {
   height: 300px;
   width: 300px;
   object-fit: contain;
 }
-
-.container {
+.choice {
   display: flex;
   height: 2em;
   width: 300px;
@@ -87,11 +87,10 @@ export default {
   justify-content: space-around;
 }
 
-#defalut_answer {
+.non_visible {
   display: none;
 }
-
-#visiable_answer {
+.visible {
   display: block;
 }
 </style>
