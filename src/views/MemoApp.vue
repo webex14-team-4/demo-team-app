@@ -112,7 +112,7 @@ export default {
 }
 
 .add-memo-field__button:hover {
-  background-color: #b2ae3b;
+  background-color: #e3de4f;
   border-radius: 5px;
 }
 </style>
